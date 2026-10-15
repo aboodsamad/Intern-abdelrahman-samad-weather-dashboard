@@ -26,7 +26,7 @@ export function GetCity() {
         <button onClick={handleSubmit}>send</button>
       </form>
       <h3>{weather?.name}</h3>
-      <h3>{weather?.weather[0].main} & {weather?.weather[0].description}</h3>
+      {weather && <h3>{weather?.weather[0].main} & {weather?.weather[0].description}</h3>}
     </div>
   );
 }
