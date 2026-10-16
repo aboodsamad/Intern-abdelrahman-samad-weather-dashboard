@@ -10,20 +10,23 @@ export function GetCity() {
   const [loadState, setLoadState] = useState(false);
 
   async function handleSubmit(e: { preventDefault: () => void }) {
-    setLoadState(true);
     e.preventDefault();
-    getcurrentWeather(cityName)
-      .then((data) => {
-        setWeather(data);
-        console.log(data);
-      })
-      .catch((err) => {
-        console.log(err.message);
-        setError(err.message);
-      });
-    setLoadState(false);
     setWeather(null);
     setError("");
+    if (!cityName.trim()) {
+      setError("Please Enter a city Name");
+    } else {
+      setLoadState(true);
+      getcurrentWeather(cityName)
+        .then((data) => {
+          setWeather(data);
+          console.log(data);
+        })
+        .catch((err) => {
+          console.log(err.message);
+          setError(err.message);
+        }).finally(() => setLoadState(false));
+    }
   }
   return (
     <div>
@@ -34,7 +37,7 @@ export function GetCity() {
           onChange={(e) => setCityName(e.target.value)}
           placeholder="Enter City Name"
         />
-        <button onClick={handleSubmit}>send</button>
+        <button type="submit">Search</button>
       </form>
       {loadState && (
         <>
