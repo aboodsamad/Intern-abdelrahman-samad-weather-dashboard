@@ -2,13 +2,21 @@ import { useState } from "react";
 import { getcurrentWeather, getcurrentForcast } from "../service/weatherApi";
 import type { WeatherData, ForecastData } from "../model/weatherData";
 import { ClipLoader } from "react-spinners";
+import { Forecast } from "../components/forecast";
+
+function skyClass(main?: string) {
+  if (!main) return "idle";
+  if (main === "Clear") return "clear";
+  if (["Rain", "Drizzle", "Thunderstorm"].includes(main)) return "rain";
+  return "clouds";
+}
 
 export function GetCity() {
   const [cityName, setCityName] = useState("");
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [error, setError] = useState("");
   const [loadState, setLoadState] = useState(false);
-  const [forecast, setforecast] = useState<ForecastData | null> (null);
+  const [forecast, setforecast] = useState<ForecastData | null>(null);
 
   async function handleSubmit(e: { preventDefault: () => void }) {
     setforecast(null);
@@ -34,9 +42,10 @@ export function GetCity() {
         .finally(() => setLoadState(false));
     }
   }
+  const sky = skyClass(weather?.weather[0].main);
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
+    <main className={`app ${sky}`}>
+      <form className="search" onSubmit={handleSubmit}>
         <input
           type="text"
           value={cityName}
@@ -46,33 +55,27 @@ export function GetCity() {
         <button type="submit">Search</button>
       </form>
       {loadState && (
-        <>
-          <br /> <ClipLoader />
-        </>
+        <div className="status">
+          <ClipLoader color="#fff" />
+        </div>
       )}
-      {error && <h3>{error}</h3>}
+      {error && (
+        <p className="error" role="alert">
+          {error}
+        </p>
+      )}
+      {!weather && !error && !loadState && (
+        <p className="hint">Search for a city to see its weather.</p>
+      )}
       {weather && !loadState && (
-        <>
-          <h3>{weather.name}</h3>
-          <h3>
-            {weather.weather[0].main} & {weather.weather[0].description}
-          </h3>
-          <h3>
-            {weather.main.humidity}% & {weather.main.temp}°C
-          </h3>
-
-          {forecast && !loadState && (
-            forecast?.list.filter((item) => item.dt_txt.includes("12:00:00"))
-            .map((item) =>(
-              <div key={item.dt_txt}>
-                <h3>{item.dt_txt.split(" ")[0]}</h3>
-                <h3>{item.main.temp}°C</h3>
-                <h3>{item.weather[0].main} & {item.weather[0].description}</h3>
-              </div>
-            ))
-          )}
-        </>
+        <section className="current">
+          <h1 className="city">{weather.name}</h1>
+          <p className="temp">{Math.round(weather.main.temp)}°</p>
+          <p className="desc">{weather.weather[0].description}</p>
+          <p className="meta">Humidity {weather.main.humidity}%</p>
+        </section>
       )}
-    </div>
+      {forecast && !loadState && <Forecast forecast={forecast} />}
+    </main>
   );
 }
