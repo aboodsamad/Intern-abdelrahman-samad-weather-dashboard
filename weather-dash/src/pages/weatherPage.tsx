@@ -3,6 +3,8 @@ import { getcurrentWeather, getcurrentForcast } from "../service/weatherApi";
 import type { WeatherData, ForecastData } from "../model/weatherData";
 import { ClipLoader } from "react-spinners";
 import { Forecast } from "../components/forecast";
+import { CurrentWeather } from "../components/currentWeather";
+import { SearchBar } from "../components/searchBar";
 
 function skyClass(main?: string) {
   if (!main) return "idle";
@@ -45,15 +47,11 @@ export function GetCity() {
   const sky = skyClass(weather?.weather[0].main);
   return (
     <main className={`app ${sky}`}>
-      <form className="search" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={cityName}
-          onChange={(e) => setCityName(e.target.value)}
-          placeholder="Enter City Name"
-        />
-        <button type="submit">Search</button>
-      </form>
+      <SearchBar
+        handleSubmit={handleSubmit}
+        setCityName={setCityName}
+        cityName={cityName}
+      />
       {loadState && (
         <div className="status">
           <ClipLoader color="#fff" />
@@ -67,14 +65,7 @@ export function GetCity() {
       {!weather && !error && !loadState && (
         <p className="hint">Search for a city to see its weather.</p>
       )}
-      {weather && !loadState && (
-        <section className="current">
-          <h1 className="city">{weather.name}</h1>
-          <p className="temp">{Math.round(weather.main.temp)}°</p>
-          <p className="desc">{weather.weather[0].description}</p>
-          <p className="meta">Humidity {weather.main.humidity}%</p>
-        </section>
-      )}
+      {weather && !loadState && <CurrentWeather weather={weather} />}
       {forecast && !loadState && <Forecast forecast={forecast} />}
     </main>
   );
