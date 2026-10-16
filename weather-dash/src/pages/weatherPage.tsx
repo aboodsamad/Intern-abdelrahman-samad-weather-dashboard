@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getcurrentWeather } from "../service/weatherApi";
+import { getcurrentWeather, getcurrentForcast } from "../service/weatherApi";
 import type { WeatherData } from "../model/weatherData";
 import { ClipLoader } from "react-spinners";
 
@@ -16,6 +16,7 @@ export function GetCity() {
     if (!cityName.trim()) {
       setError("Please Enter a city Name");
     } else {
+      console.log("forecast" ,getcurrentForcast(cityName));
       setLoadState(true);
       getcurrentWeather(cityName)
         .then((data) => {
@@ -25,7 +26,8 @@ export function GetCity() {
         .catch((err) => {
           console.log(err.message);
           setError(err.message);
-        }).finally(() => setLoadState(false));
+        })
+        .finally(() => setLoadState(false));
     }
   }
   return (
