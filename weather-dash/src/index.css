@@ -34,3 +34,28 @@ body { margin: 0; }
   border-radius: 8px;
 }
 .hint { margin: 0; opacity: 0.85; }
+
+.search { display: flex; gap: 8px; }
+.search input {
+  flex: 1;
+  min-width: 0;
+  padding: 14px 20px;
+  font: inherit;
+  color: #fff;
+  background: rgba(10, 20, 35, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+}
+.search input::placeholder { color: rgba(255, 255, 255, 0.65); }
+.search button {
+  padding: 0 24px;
+  font: inherit;
+  font-weight: 600;
+  color: #14263b;
+  background: #fff;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.search input:focus-visible,
+.search button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
